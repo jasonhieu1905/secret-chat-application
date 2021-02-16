@@ -4,7 +4,8 @@ import ChatFeed from "./components/ChatFeed";
 import LoginForm from "./components/LoginForm";
 
 function App() {
-  if (!localStorage.getItem("username")) return <LoginForm />;
+  const currentUser = localStorage.getItem("username");
+  if (!currentUser) return <LoginForm />;
 
   const checkIfHasAnyGroupChat = (chats) => {
     if (chats.length === 0) {
@@ -12,6 +13,13 @@ function App() {
       window.location.reload();
     }
   };
+
+  const checkNotification = (chatId, message) => {
+    if (message.sender_username !== currentUser) {
+      const audio = new Audio('https://drive.google.com/file/d/169fMntkoGQxIfReF163sy6E4HLIPpOnk/view?usp=sharing');
+      audio.play();
+    }
+  }
 
   return (
     <ChatEngine
@@ -21,6 +29,7 @@ function App() {
       onGetChats={(chats) => checkIfHasAnyGroupChat(chats)}
       height="100vh"
       renderChatFeed={(chatAppState) => <ChatFeed {...chatAppState} />}
+      onNewMessage={(chatId, message) => checkNotification(chatId, message)}
     />
   );
 }
